@@ -1,18 +1,12 @@
-// Copyright 2020-Present VMware, Inc.
-// SPDX-License-Identifier: Apache-2.0
-
-package main
+package commands
 
 import (
 	"fmt"
-	"io/ioutil"
-	"log"
 	"os"
 
 	"github.com/pivotal/kpack/pkg/logs"
 	"github.com/spf13/cobra"
 
-	"github.com/vmware-tanzu/kpack-cli/pkg/commands"
 	buildcmds "github.com/vmware-tanzu/kpack-cli/pkg/commands/build"
 	buildercmds "github.com/vmware-tanzu/kpack-cli/pkg/commands/builder"
 	clusterbuildercmds "github.com/vmware-tanzu/kpack-cli/pkg/commands/clusterbuilder"
@@ -29,51 +23,7 @@ import (
 	"github.com/vmware-tanzu/kpack-cli/pkg/secret"
 )
 
-var (
-	Version   = "dev"
-	CommitSHA = ""
-)
 
-func main() {
-	log.SetOutput(ioutil.Discard)
-
-	var clientSetProvider k8s.DefaultClientSetProvider
-
-	rootCmd := &cobra.Command{
-		Use: "kp",
-		Long: `kp controls the kpack installation on Kubernetes.
-
-kpack extends Kubernetes and utilizes unprivileged kubernetes primitives to provide 
-builds of OCI images as a platform implementation of Cloud Native Buildpacks (CNB).
-Learn more about kpack @ https://github.com/pivotal/kpack`,
-	}
-	rootCmd.AddCommand(
-		getVersionCommand(),
-		getImageCommand(clientSetProvider),
-		getBuildCommand(clientSetProvider),
-		getSecretCommand(clientSetProvider),
-		getClusterBuilderCommand(clientSetProvider),
-		getBuilderCommand(clientSetProvider),
-		getStackCommand(clientSetProvider),
-		getStoreCommand(clientSetProvider),
-		getLifecycleCommand(clientSetProvider),
-		getImportCommand(clientSetProvider),
-		getConfigCommand(clientSetProvider),
-		getCompletionCommand(),
-	)
-
-	err := rootCmd.Execute()
-	if err != nil {
-		os.Exit(1)
-	}
-
-	/* Generate Documentation /
-	rootCmd.DisableAutoGenTag = true
-	err := doc.GenMarkdownTree(rootCmd, "./docs")
-	if err != nil {
-		os.Exit(1)
-	} /**/
-}
 
 func getVersionCommand() *cobra.Command {
 	versionCmd := &cobra.Command{
